@@ -33,6 +33,14 @@ const Navbar = () => {
           Products
         </button>
 
+        <button
+          onClick={() => navigate("/wishlist")}
+          className="logout-button"
+        >
+          Wishlist
+        </button>
+
+
         <button onClick={handleLogout} className="logout-button">
           Logout
         </button>

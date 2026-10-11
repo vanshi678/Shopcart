@@ -31,4 +31,19 @@ export const getProductById = (id) => {
   return api.get(`/api/products/${id}`);
 };
 
+
+
+export const getWishlist = () => {
+  return api.get("/api/wishlist");
+};
+
+export const addToWishlist = (productId) => {
+  return api.post(`/api/wishlist/${productId}`);
+};
+
+export const removeFromWishlist = (productId) => {
+  return api.delete(`/api/wishlist/${productId}`);
+};
+
+
 export default api;

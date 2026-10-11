@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const customerSchema = new mongoose.Schema(
@@ -22,6 +23,13 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   {
     timestamps: true,

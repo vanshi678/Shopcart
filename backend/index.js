@@ -15,9 +15,11 @@ app.use(cookieParser());
 
 const customerRoutes = require("./routes/customer.routes");
 const productRoutes = require("./routes/product.routes");
+const wishlistRoutes = require("./routes/wishlist.routes");
 
 app.use("/customers", customerRoutes);
 app.use("/products", productRoutes);
+app.use("/wishlist", wishlistRoutes);
 
 mongoose
   .connect(process.env.dbURL)
