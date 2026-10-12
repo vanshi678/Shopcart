@@ -22,7 +22,12 @@ const Home = () => {
   }, [navigate]);
 
   if (!customer) {
-    return <p>Loading...</p>;
+    return (
+      <div className="sk-loading">
+        <div className="sk-spinner" />
+        <span>Loading your profile…</span>
+      </div>
+    );
   }
 
   return (
@@ -36,11 +41,11 @@ const Home = () => {
 
             <h1>
               Welcome back,{" "}
-              <span>{customer.fullName}</span> 👋
+              <span>{customer.fullName}</span> 
             </h1>
 
             <p className="welcome-text">
-              Your account is ready. Here's a quick look at your profile.
+              Your account is ready. Here&apos;s a quick look at your profile.
             </p>
           </section>
 
@@ -77,7 +82,7 @@ const Home = () => {
           <div className="home-note">
             <span>🛍️</span>
             <p>
-              You're all set to explore ShopKart and start shopping.
+              You&apos;re all set to explore ShopKart and start shopping.
             </p>
           </div>
         </div>

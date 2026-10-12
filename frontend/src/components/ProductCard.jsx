@@ -59,50 +59,63 @@ const ProductCard = ({ product }) => {
     };
 
     return (
-        <div>
-            <img
-                src={product.image}
-                alt={product.name}
-                style={{
-                    width: "250px",
-                    height: "200px",
-                    objectFit: "cover",
-                }}
-            />
+        <div className="product-card">
+            <div className="product-image-wrap">
+                <img
+                    src={product.image}
+                    alt={product.name}
+                />
+                <span className={`product-badge ${product.stock > 0 ? "badge-instock" : "badge-outofstock"}`}>
+                    {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                </span>
+            </div>
 
-            <h2>{product.name}</h2>
+            <div className="product-body">
+                <p className="product-category">{product.category}</p>
+                <h2 className="product-name">{product.name}</h2>
+                <p className="product-price">
+                    <span>₹</span>{product.price.toLocaleString("en-IN")}
+                </p>
 
-            <p>₹{product.price}</p>
+                <div className="product-actions">
+                    <button
+                        className="btn-details"
+                        onClick={() => navigate(`/products/${product._id}`)}
+                    >
+                        View Details
+                    </button>
 
-            <p>{product.category}</p>
+                    <button
+                        className="btn-add-cart"
+                        onClick={handleAddToCart}
+                        disabled={addingToCart || product.stock < 1}
+                    >
+                        {addingToCart ? "Adding…" : "Add to Cart"}
+                    </button>
 
-            <p>
-                {product.stock > 0 ? "In Stock" : "Out of Stock"}
-            </p>
+                    {cartMessage && (
+                        <p className="product-feedback success">{cartMessage}</p>
+                    )}
+                    {cartError && (
+                        <p className="product-feedback error">{cartError}</p>
+                    )}
 
-            <button onClick={() => navigate(`/products/${product._id}`)}>
-                View Details
-            </button>
+                    <button
+                        className="btn-wishlist"
+                        onClick={handleAddToWishlist}
+                        disabled={saving}
+                    >
+                        {saving ? "Saving…" : "♡ Wishlist"}
+                    </button>
 
-            <button
-                onClick={handleAddToCart}
-                disabled={addingToCart || product.stock < 1}
-            >
-                {addingToCart ? "Adding..." : "Add to Cart"}
-            </button>
-
-            {cartMessage && <p>{cartMessage}</p>}
-            {cartError && <p style={{ color: "red" }}>{cartError}</p>}
-
-            <button
-                onClick={handleAddToWishlist}
-                disabled={saving}
-            >
-                {saving ? "Saving..." : "♡ Add to Wishlist"}
-            </button>
-
-            {message && <p>{message}</p>}
-            {error && <p style={{ color: "red" }}>{error}</p>}
+                    {message && (
+                        <p className="product-feedback success">{message}</p>
+                    )}
+                    {error && (
+                        <p className="product-feedback error">{error}</p>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

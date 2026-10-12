@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getOrderById } from "../services/api";
+import Navbar from "../components/Navbar";
 
 function OrderSuccess() {
   const { id } = useParams();
@@ -42,146 +43,122 @@ function OrderSuccess() {
 
   if (loading) {
     return (
-      <p className="p-8 text-center">
-        Loading order details...
-      </p>
+      <>
+        <Navbar />
+        <div className="sk-loading">
+          <div className="sk-spinner" />
+          <span>Loading order details…</span>
+        </div>
+      </>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="mx-auto max-w-xl p-8 text-center">
-        <h1 className="mb-3 text-2xl font-bold">
-          Unable to load order
-        </h1>
-
-        <p className="mb-6 text-gray-600">
-          {error || "Order not found."}
-        </p>
-
-        <Link
-          to="/orders"
-          className="text-indigo-600 hover:underline"
-        >
-          View My Orders
-        </Link>
-      </div>
+      <>
+        <Navbar />
+        <div className="empty-state" style={{ paddingTop: 80 }}>
+          <div className="empty-state-icon">⚠️</div>
+          <h2>Unable to load order</h2>
+          <p>{error || "Order not found."}</p>
+          <Link to="/orders" style={{ color: "var(--accent-light)", fontWeight: 700 }}>
+            View My Orders
+          </Link>
+        </div>
+      </>
     );
   }
 
   const paid = order.paymentStatus === "PAID";
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-12">
-      <div className="mx-auto max-w-2xl rounded-2xl bg-white p-8 shadow-sm">
-        <div className="mb-6 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-700">
-            {paid ? "✓" : "!"}
+    <>
+      <Navbar />
+      <div className="order-success-page">
+        <div className="order-success-card">
+          {/* Top hero */}
+          <div className="order-success-top">
+            <div className={`success-icon ${paid ? "paid" : "pending"}`}>
+              {paid ? "✓" : "!"}
+            </div>
+
+            <h1>{paid ? "Order Placed!" : "Payment Pending"}</h1>
+
+            <p>
+              {paid
+                ? "Thank you for shopping with ShopKart."
+                : "We could not confirm your payment yet. Check your order status before trying again."}
+            </p>
           </div>
 
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
-            {paid ? "Order Placed!" : "Payment Pending"}
-          </h1>
+          {/* Order meta */}
+          <div className="order-meta-section">
+            <h2>Order Info</h2>
 
-          <p className="text-gray-600">
-            {paid
-              ? "Thank you for shopping with ShopKart."
-              : "We could not confirm your payment yet. Check your order status before trying again."}
-          </p>
-        </div>
-
-        <div className="mb-6 space-y-3 rounded-xl bg-gray-50 p-5">
-          <div className="flex justify-between gap-4">
-            <span className="text-gray-600">Order ID</span>
-            <span className="break-all text-right font-medium">
-              {order._id}
-            </span>
+            <div className="meta-row">
+              <span>Order ID</span>
+              <span>{order._id}</span>
+            </div>
+            <div className="meta-row">
+              <span>Payment</span>
+              <span style={{ color: paid ? "var(--success)" : "var(--warning)" }}>
+                {order.paymentStatus}
+              </span>
+            </div>
+            <div className="meta-row">
+              <span>Order Status</span>
+              <span>{order.status}</span>
+            </div>
+            <div className="meta-row bold">
+              <span>Total</span>
+              <span>₹{Number(order.totalAmount).toFixed(2)}</span>
+            </div>
           </div>
 
-          <div className="flex justify-between gap-4">
-            <span className="text-gray-600">Payment</span>
-            <span className="font-medium">
-              {order.paymentStatus}
-            </span>
-          </div>
+          {/* Items */}
+          <div className="order-items-section">
+            <h2>Items Ordered</h2>
 
-          <div className="flex justify-between gap-4">
-            <span className="text-gray-600">Order Status</span>
-            <span className="font-medium">
-              {order.status}
-            </span>
-          </div>
-
-          <div className="flex justify-between gap-4 border-t pt-3">
-            <span className="font-semibold">Total</span>
-            <span className="font-semibold">
-              ₹{Number(order.totalAmount).toFixed(2)}
-            </span>
-          </div>
-        </div>
-
-        <h2 className="mb-4 text-lg font-semibold">
-          Items Ordered
-        </h2>
-
-        <div className="mb-8 space-y-4">
-          {order.items.map((item, index) => (
-            <div
-              key={item._id || `${item.product}-${index}`}
-              className="flex justify-between gap-4 border-b pb-3"
-            >
-              <div>
-                <p className="font-medium">{item.name}</p>
-                <p className="text-sm text-gray-500">
-                  Quantity: {item.quantity}
+            {order.items.map((item, index) => (
+              <div
+                key={item._id || `${item.product}-${index}`}
+                className="order-item-row"
+              >
+                <div>
+                  <p className="order-item-name">{item.name}</p>
+                  <p className="order-item-qty">Qty: {item.quantity}</p>
+                </div>
+                <p className="order-item-price">
+                  ₹{(Number(item.price) * item.quantity).toFixed(2)}
                 </p>
               </div>
+            ))}
+          </div>
 
-              <p className="font-medium">
-                ₹
-                {(
-                  Number(item.price) * item.quantity
-                ).toFixed(2)}
-              </p>
-            </div>
-          ))}
-        </div>
+          {/* Address */}
+          <div className="order-address-section">
+            <h2>Delivery Address</h2>
+            <p className="order-address-text">
+              {order.shippingAddress.fullName}<br />
+              {order.shippingAddress.addressLine1}<br />
+              {order.shippingAddress.city}, {order.shippingAddress.state} – {order.shippingAddress.pincode}<br />
+              Phone: {order.shippingAddress.phone}
+            </p>
+          </div>
 
-        <div className="mb-8">
-          <h2 className="mb-3 text-lg font-semibold">
-            Delivery Address
-          </h2>
+          {/* Actions */}
+          <div className="order-success-actions">
+            <Link to="/orders" className="btn-primary" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 12, fontSize: 14 }}>
+              View My Orders
+            </Link>
 
-          <p className="text-gray-600">
-            {order.shippingAddress.fullName}
-            <br />
-            {order.shippingAddress.addressLine1}
-            <br />
-            {order.shippingAddress.city},{" "}
-            {order.shippingAddress.state} -{" "}
-            {order.shippingAddress.pincode}
-            <br />
-            Phone: {order.shippingAddress.phone}
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Link
-            to="/orders"
-            className="flex-1 rounded-lg bg-indigo-600 px-5 py-3 text-center font-semibold text-white hover:bg-indigo-700"
-          >
-            View My Orders
-          </Link>
-
-          <Link
-            to="/products"
-            className="flex-1 rounded-lg border border-gray-300 px-5 py-3 text-center font-semibold text-gray-700 hover:bg-gray-50"
-          >
-            Continue Shopping
-          </Link>
+            <Link to="/products" className="btn-outline">
+              Continue Shopping
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

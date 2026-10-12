@@ -1,6 +1,7 @@
 
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const Cart = () => {
     const {
@@ -25,133 +26,148 @@ const Cart = () => {
     };
 
     if (loading) {
-        return <p>Loading your cart...</p>;
+        return (
+            <>
+                <Navbar />
+                <div className="sk-loading">
+                    <div className="sk-spinner" />
+                    <span>Loading your cart…</span>
+                </div>
+            </>
+        );
     }
 
     if (error && cartItems.length === 0) {
         return (
-            <div>
-                <h2>My Cart</h2>
-                <p>Unable to load your cart.</p>
-                <p>{error}</p>
-                <button onClick={refreshCart}>Try Again</button>
-            </div>
+            <>
+                <Navbar />
+                <div className="cart-page">
+                    <div className="empty-state">
+                        <div className="empty-state-icon">⚠️</div>
+                        <h2>Unable to load cart</h2>
+                        <p>{error}</p>
+                        <button className="btn-primary" style={{ maxWidth: 180, margin: "0 auto" }} onClick={refreshCart}>
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+            </>
         );
     }
 
     if (cartItems.length === 0) {
         return (
-            <div>
-                <h2>My Cart</h2>
-                <p>Your cart is empty 🛒</p>
-                <p>Looks like you haven't added anything yet.</p>
-                <button onClick={() => navigate("/products")}>
-                    Browse Products
-                </button>
-            </div>
+            <>
+                <Navbar />
+                <div className="cart-page">
+                    <div className="empty-state">
+                        <div className="empty-state-icon">🛒</div>
+                        <h2>Your cart is empty</h2>
+                        <p>Looks like you haven&apos;t added anything yet.</p>
+                        <button
+                            className="btn-primary"
+                            style={{ maxWidth: 200, margin: "0 auto" }}
+                            onClick={() => navigate("/products")}
+                        >
+                            Browse Products
+                        </button>
+                    </div>
+                </div>
+            </>
         );
     }
 
     return (
-        <div style={{ padding: "24px" }}>
-            <h1>My Cart</h1>
+        <>
+            <Navbar />
+            <div className="cart-page">
+                {error && (
+                    <p className="product-feedback error" style={{ marginBottom: 16 }}>{error}</p>
+                )}
 
-            {error && (
-                <p style={{ color: "red" }}>
-                    {error}
-                </p>
-            )}
-
-            {cartItems.map((item) => {
-                const product = item.product;
-
-                if (!product) return null;
-
-                return (
-                    <div
-                        key={product._id}
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "20px",
-                            padding: "16px 0",
-                            borderBottom: "1px solid #ddd",
-                            flexWrap: "wrap",
-                        }}
-                    >
-                        <img
-                            src={product.image}
-                            alt={product.name}
-                            style={{
-                                width: "120px",
-                                height: "100px",
-                                objectFit: "cover",
-                            }}
-                        />
-
-                        <div style={{ flex: 1 }}>
-                            <h3>{product.name}</h3>
-                            <p>₹{product.price}</p>
-
-                            <div>
-                                <button
-                                    disabled={item.quantity <= 1}
-                                    onClick={() =>
-                                        handleQuantityChange(
-                                            product._id,
-                                            item.quantity - 1
-                                        )
-                                    }
-                                >
-                                    −
-                                </button>
-
-                                <span style={{ margin: "0 12px" }}>
-                                    {item.quantity}
-                                </span>
-
-                                <button
-                                    disabled={
-                                        item.quantity >= product.stock
-                                    }
-                                    onClick={() =>
-                                        handleQuantityChange(
-                                            product._id,
-                                            item.quantity + 1
-                                        )
-                                    }
-                                >
-                                    +
-                                </button>
-                            </div>
-
-                            <button
-                                onClick={() => handleRemove(product._id)}
-                                style={{ marginTop: "8px" }}
-                            >
-                                Remove
-                            </button>
+                <div className="cart-grid">
+                    <div className="cart-items-section">
+                        <div className="cart-section-header">
+                            My Cart &nbsp;·&nbsp; <span style={{ color: "var(--text-muted)", fontSize: 14 }}>{totalItems} item{totalItems !== 1 ? "s" : ""}</span>
                         </div>
 
-                        <strong>
-                            ₹{(product.price * item.quantity).toLocaleString("en-IN")}
-                        </strong>
+                        {cartItems.map((item) => {
+                            const product = item.product;
+                            if (!product) return null;
+
+                            return (
+                                <div className="cart-item" key={product._id}>
+                                    <img
+                                        className="cart-item-img"
+                                        src={product.image}
+                                        alt={product.name}
+                                    />
+
+                                    <div className="cart-item-info">
+                                        <p className="cart-item-name">{product.name}</p>
+                                        <p className="cart-item-price">₹{product.price.toLocaleString("en-IN")} each</p>
+
+                                        <div className="cart-qty-row">
+                                            <button
+                                                className="qty-btn"
+                                                disabled={item.quantity <= 1}
+                                                onClick={() =>
+                                                    handleQuantityChange(product._id, item.quantity - 1)
+                                                }
+                                            >
+                                                −
+                                            </button>
+                                            <span className="qty-value">{item.quantity}</span>
+                                            <button
+                                                className="qty-btn"
+                                                disabled={item.quantity >= product.stock}
+                                                onClick={() =>
+                                                    handleQuantityChange(product._id, item.quantity + 1)
+                                                }
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+
+                                        <button
+                                            className="btn-remove"
+                                            onClick={() => handleRemove(product._id)}
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+
+                                    <p className="cart-item-total">
+                                        ₹{(product.price * item.quantity).toLocaleString("en-IN")}
+                                    </p>
+                                </div>
+                            );
+                        })}
                     </div>
-                );
-            })}
 
-            <div style={{ marginTop: "24px" }}>
-                <h2>Order Summary</h2>
-                <p>Total items: {totalItems}</p>
-                <p>
-                    Subtotal: ₹{subtotal.toLocaleString("en-IN")}
-                </p>
+                    <aside className="summary-card">
+                        <h2 className="summary-title">Order Summary</h2>
 
-                <button onClick={() => navigate("/checkout")}>
-                    Proceed to Checkout
-                </button>
+                        <div className="summary-row">
+                            <span>Items ({totalItems})</span>
+                            <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                        </div>
+                        <div className="summary-row">
+                            <span>Shipping</span>
+                            <span style={{ color: "var(--success)" }}>Free</span>
+                        </div>
+                        <div className="summary-row total">
+                            <span>Total</span>
+                            <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                        </div>
+
+                        <button className="btn-checkout" onClick={() => navigate("/checkout")}>
+                            Proceed to Checkout →
+                        </button>
+                    </aside>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

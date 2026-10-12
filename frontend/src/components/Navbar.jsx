@@ -17,49 +17,37 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="navbar-left">
+      <div className="navbar-left" onClick={() => navigate("/home")}>
         <div className="navbar-logo">S</div>
-
         <div>
           <div className="navbar-brand">ShopKart</div>
-          <div className="navbar-subtitle">
-            Simple. Smart. Shopping.
-          </div>
+          <div className="navbar-subtitle">Simple. Smart. Shopping.</div>
         </div>
       </div>
 
       <div className="navbar-right">
-        <span className="navbar-welcome">My Account</span>
+        <button onClick={() => navigate("/home")} className="nav-btn">
+          My Account
+        </button>
 
-        <button
-          onClick={() => navigate("/products")}
-          className="logout-button"
-        >
+        <button onClick={() => navigate("/products")} className="nav-btn">
           Products
         </button>
 
-        <button
-          onClick={() => navigate("/wishlist")}
-          className="logout-button"
-        >
-          Wishlist
+        <button onClick={() => navigate("/wishlist")} className="nav-btn">
+          ♡ Wishlist
         </button>
 
-        <button
-          onClick={() => navigate("/cart")}
-          className="logout-button"
-        >
-          Cart ({totalItems})
+        <button onClick={() => navigate("/cart")} className="nav-btn cart-btn">
+          🛒
+          <span className="cart-badge">{totalItems}</span>
         </button>
 
-        <button
-          onClick={() => navigate("/orders")}
-          className="logout-button"
-        >
-          My Orders
+        <button onClick={() => navigate("/orders")} className="nav-btn">
+          Orders
         </button>
 
-        <button onClick={handleLogout} className="logout-button">
+        <button onClick={handleLogout} className="nav-btn logout-btn">
           Logout
         </button>
       </div>

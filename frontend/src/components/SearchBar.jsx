@@ -5,15 +5,20 @@ const SearchBar = ({
   setCategory,
 }) => {
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Search products..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+    <div className="search-bar">
+      <div className="search-input-wrap">
+        <span className="search-icon">🔍</span>
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Search products…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
 
       <select
+        className="category-select"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
       >

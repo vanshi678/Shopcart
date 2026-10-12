@@ -41,20 +41,26 @@ const Login = () => {
     };
 
     return (
-        <div className="login-page">
-            <div className="login-card">
-                <div className="register-header">
-                    <span className="brand-mark">S</span>
-
+        <div className="auth-page">
+            <div className="auth-card">
+                <div className="auth-brand">
+                    <span className="auth-logo">S</span>
                     <div>
-                        <p className="brand-name">ShopKart</p>
-                        <p className="brand-tagline">Your everyday shopping place</p>
+                        <p className="auth-brand-name">ShopKart</p>
+                        <p className="auth-brand-tag">Your everyday shopping place</p>
                     </div>
                 </div>
-                <h1>Welcome Back</h1>
-                <p>Sign in to continue to ShopKart.</p>
 
-                {error && <p className="error-message">{error}</p>}
+                <div className="auth-title">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to continue to ShopKart.</p>
+                </div>
+
+                {error && (
+                    <div className="alert-error">
+                        <span>⚠</span> {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -79,14 +85,14 @@ const Login = () => {
                         />
                     </div>
 
-                    <button type="submit" className="login-button">
+                    <button type="submit" className="btn-primary">
                         Sign In
                     </button>
                 </form>
 
-                <p>
-                    Don't have an account?{" "}
-                    <Link to="/register">Create one</Link>
+                <p className="auth-footer">
+                    Don&apos;t have an account?{" "}
+                    <Link to="/">Create one</Link>
                 </p>
             </div>
         </div>

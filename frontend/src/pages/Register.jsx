@@ -44,7 +44,6 @@ const Register = () => {
 
         try {
             await registerCustomer(formData);
-
             navigate("/login");
         } catch (error) {
             setError(
@@ -54,23 +53,26 @@ const Register = () => {
     };
 
     return (
-        <div className="register-page">
-            <div className="register-card">
-                <div className="register-header">
-                    <span className="brand-mark">S</span>
-
+        <div className="auth-page">
+            <div className="auth-card">
+                <div className="auth-brand">
+                    <span className="auth-logo">S</span>
                     <div>
-                        <p className="brand-name">ShopKart</p>
-                        <p className="brand-tagline">Your everyday shopping place</p>
+                        <p className="auth-brand-name">ShopKart</p>
+                        <p className="auth-brand-tag">Your everyday shopping place</p>
                     </div>
                 </div>
 
-                <div className="register-title">
+                <div className="auth-title">
                     <h1>Create your account</h1>
                     <p>Join ShopKart and start shopping.</p>
                 </div>
 
-                {error && <p className="error-message">{error}</p>}
+                {error && (
+                    <div className="alert-error">
+                        <span>⚠</span> {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -117,12 +119,12 @@ const Register = () => {
                         />
                     </div>
 
-                    <button type="submit" className="register-button">
+                    <button type="submit" className="btn-primary">
                         Create Account
                     </button>
                 </form>
 
-                <p className="login-link">
+                <p className="auth-footer">
                     Already have an account?{" "}
                     <Link to="/login">Sign in</Link>
                 </p>

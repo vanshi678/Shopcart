@@ -5,6 +5,7 @@ import {
   createPaymentOrder,
   verifyPayment,
 } from "../services/api";
+import Navbar from "../components/Navbar";
 
 // Load Razorpay's checkout script
 function loadRazorpayScript() {
@@ -159,7 +160,7 @@ function Checkout() {
 
         handler: async (paymentResponse) => {
           try {
-            setError("Verifying your payment...");
+            setError("Verifying your payment…");
 
             // The backend verifies the signature before placing the order.
             await verifyPayment({
@@ -197,7 +198,7 @@ function Checkout() {
         },
 
         theme: {
-          color: "#4F46E5",
+          color: "#8b5cf6",
         },
       };
 
@@ -225,160 +226,130 @@ function Checkout() {
 
   if (loading) {
     return (
-      <p className="p-8 text-center">
-        Loading your cart...
-      </p>
+      <>
+        <Navbar />
+        <div className="sk-loading">
+          <div className="sk-spinner" />
+          <span>Loading your cart…</span>
+        </div>
+      </>
     );
   }
 
+  const fields = [
+    ["fullName", "Full Name", "text", "name"],
+    ["phone", "Phone Number (10 digits)", "tel", "tel"],
+    ["addressLine1", "Address", "text", "street-address"],
+    ["city", "City", "text", "address-level2"],
+    ["state", "State", "text", "address-level1"],
+    ["pincode", "Pincode (6 digits)", "text", "postal-code"],
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-8">
-      <div className="mx-auto max-w-5xl">
-        <button
-          type="button"
-          onClick={() => navigate("/cart")}
-          className="mb-6 text-sm font-medium text-indigo-600 hover:underline"
-          disabled={processing}
-        >
-          ← Back to Cart
-        </button>
+    <>
+      <Navbar />
+      <div className="checkout-page">
+        <div className="checkout-inner">
+          <button
+            type="button"
+            className="back-link"
+            onClick={() => navigate("/cart")}
+            disabled={processing}
+          >
+            ← Back to Cart
+          </button>
 
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">
-          Checkout
-        </h1>
+          <h1>Checkout</h1>
+          <p>Enter your delivery details and review your order.</p>
 
-        <p className="mb-8 text-gray-500">
-          Enter your delivery details and review your order.
-        </p>
-
-        {cartItems.length === 0 ? (
-          <div className="rounded-xl bg-white p-8 text-center shadow-sm">
-            <p className="mb-4 text-gray-600">
-              Your cart is empty.
-            </p>
-
-            <button
-              type="button"
-              onClick={() => navigate("/products")}
-              className="rounded-lg bg-indigo-600 px-5 py-3 text-white hover:bg-indigo-700"
-            >
-              Browse Products
-            </button>
-          </div>
-        ) : (
-          <div className="grid gap-8 md:grid-cols-3">
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-5 rounded-xl bg-white p-6 shadow-sm md:col-span-2"
-            >
-              <h2 className="text-xl font-semibold text-gray-900">
-                Shipping Address
-              </h2>
-
-              {[
-                ["fullName", "Full Name", "text"],
-                ["phone", "10-digit Phone Number", "tel"],
-                ["addressLine1", "Address", "text"],
-                ["city", "City", "text"],
-                ["state", "State", "text"],
-                ["pincode", "6-digit Pincode", "text"],
-              ].map(([name, label, type]) => (
-                <div key={name}>
-                  <label
-                    htmlFor={name}
-                    className="mb-2 block text-sm font-medium text-gray-700"
-                  >
-                    {label}
-                  </label>
-
-                  <input
-                    id={name}
-                    name={name}
-                    type={type}
-                    value={shippingAddress[name]}
-                    onChange={handleChange}
-                    required
-                    disabled={processing}
-                    autoComplete={
-                      name === "fullName"
-                        ? "name"
-                        : name === "phone"
-                          ? "tel"
-                          : name === "addressLine1"
-                            ? "street-address"
-                            : name === "city"
-                              ? "address-level2"
-                              : name === "state"
-                                ? "address-level1"
-                                : "postal-code"
-                    }
-                    className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 disabled:bg-gray-100"
-                  />
-                </div>
-              ))}
-
-              {error && (
-                <p
-                  role="alert"
-                  aria-live="polite"
-                  className="text-sm text-amber-700"
-                >
-                  {error}
-                </p>
-              )}
-
+          {cartItems.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-state-icon">🛒</div>
+              <h2>Your cart is empty</h2>
               <button
-                type="submit"
-                disabled={processing || cartItems.length === 0}
-                className="w-full rounded-lg bg-indigo-600 px-5 py-3 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="btn-primary"
+                style={{ maxWidth: 200, margin: "0 auto" }}
+                onClick={() => navigate("/products")}
               >
-                {processing
-                  ? "Processing..."
-                  : "Continue to Payment"}
+                Browse Products
               </button>
-            </form>
+            </div>
+          ) : (
+            <div className="checkout-grid">
+              <form
+                onSubmit={handleSubmit}
+                className="checkout-form-card"
+              >
+                <h2>Shipping Address</h2>
 
-            <aside className="h-fit rounded-xl bg-white p-6 shadow-sm">
-              <h2 className="mb-5 text-xl font-semibold text-gray-900">
-                Order Summary
-              </h2>
-
-              <div className="mb-4 space-y-4">
-                {cartItems.map((item) => (
-                  <div
-                    key={item.product?._id}
-                    className="flex justify-between gap-3 text-sm"
-                  >
-                    <span className="text-gray-600">
-                      {item.product?.name || "Product"} ×{" "}
-                      {item.quantity}
-                    </span>
-
-                    <span className="font-medium text-gray-900">
-                      ₹
-                      {(
-                        (item.product?.price || 0) *
-                        item.quantity
-                      ).toFixed(2)}
-                    </span>
+                {fields.map(([name, label, type, autoComplete]) => (
+                  <div className="field-group" key={name}>
+                    <label className="checkout-label" htmlFor={name}>
+                      {label}
+                    </label>
+                    <input
+                      id={name}
+                      name={name}
+                      type={type}
+                      value={shippingAddress[name]}
+                      onChange={handleChange}
+                      required
+                      disabled={processing}
+                      autoComplete={autoComplete}
+                      className="checkout-input"
+                      placeholder={label}
+                    />
                   </div>
                 ))}
-              </div>
 
-              <div className="flex justify-between border-t pt-4 font-semibold">
-                <span>Estimated Total</span>
-                <span>₹{subtotal.toFixed(2)}</span>
-              </div>
+                {error && (
+                  <div className="alert-warning">
+                    ⚠ {error}
+                  </div>
+                )}
 
-              <p className="mt-3 text-xs text-gray-500">
-                The server calculates the final price and checks
-                product stock before creating your payment order.
-              </p>
-            </aside>
-          </div>
-        )}
+                <button
+                  type="submit"
+                  disabled={processing || cartItems.length === 0}
+                  className="btn-primary"
+                >
+                  {processing ? "Processing…" : "Continue to Payment →"}
+                </button>
+              </form>
+
+              <aside className="summary-card">
+                <h2 className="summary-title">Order Summary</h2>
+
+                <div style={{ marginBottom: 16 }}>
+                  {cartItems.map((item) => (
+                    <div
+                      key={item.product?._id}
+                      className="summary-row"
+                    >
+                      <span style={{ color: "var(--text-secondary)", fontSize: 13 }}>
+                        {item.product?.name || "Product"} × {item.quantity}
+                      </span>
+                      <span style={{ fontWeight: 600, fontSize: 13 }}>
+                        ₹{((item.product?.price || 0) * item.quantity).toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="summary-row total">
+                  <span>Estimated Total</span>
+                  <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                </div>
+
+                <p style={{ marginTop: 12, fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>
+                  The server calculates the final price and checks product stock before creating your payment order.
+                </p>
+              </aside>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
