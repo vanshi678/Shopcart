@@ -1,8 +1,11 @@
+
 import { useNavigate } from "react-router-dom";
 import { logoutCustomer } from "../services/api";
+import { useCart } from "../context/CartContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { totalItems } = useCart();
 
   const handleLogout = async () => {
     try {
@@ -20,12 +23,15 @@ const Navbar = () => {
 
         <div>
           <div className="navbar-brand">ShopKart</div>
-          <div className="navbar-subtitle">Simple. Smart. Shopping.</div>
+          <div className="navbar-subtitle">
+            Simple. Smart. Shopping.
+          </div>
         </div>
       </div>
 
       <div className="navbar-right">
         <span className="navbar-welcome">My Account</span>
+
         <button
           onClick={() => navigate("/products")}
           className="logout-button"
@@ -40,6 +46,12 @@ const Navbar = () => {
           Wishlist
         </button>
 
+        <button
+          onClick={() => navigate("/cart")}
+          className="logout-button"
+        >
+          Cart ({totalItems})
+        </button>
 
         <button onClick={handleLogout} className="logout-button">
           Logout

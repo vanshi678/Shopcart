@@ -2,13 +2,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addToWishlist } from "../services/api";
+import { useCart } from "../context/CartContext";
 
 const ProductCard = ({ product }) => {
     const navigate = useNavigate();
+    const { addToCart } = useCart();
 
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+
+    const [addingToCart, setAddingToCart] = useState(false);
+    const [cartMessage, setCartMessage] = useState("");
+    const [cartError, setCartError] = useState("");
 
     const handleAddToWishlist = async () => {
         if (saving) return;
@@ -27,6 +33,28 @@ const ProductCard = ({ product }) => {
             );
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleAddToCart = async () => {
+        if (addingToCart) return;
+
+        setAddingToCart(true);
+        setCartMessage("");
+        setCartError("");
+
+        try {
+            const success = await addToCart(product._id);
+
+            if (success) {
+                setCartMessage("Added to cart!");
+            } else {
+                setCartError("Could not add product to cart.");
+            }
+        } catch {
+            setCartError("Could not add product to cart.");
+        } finally {
+            setAddingToCart(false);
         }
     };
 
@@ -55,6 +83,16 @@ const ProductCard = ({ product }) => {
             <button onClick={() => navigate(`/products/${product._id}`)}>
                 View Details
             </button>
+
+            <button
+                onClick={handleAddToCart}
+                disabled={addingToCart || product.stock < 1}
+            >
+                {addingToCart ? "Adding..." : "Add to Cart"}
+            </button>
+
+            {cartMessage && <p>{cartMessage}</p>}
+            {cartError && <p style={{ color: "red" }}>{cartError}</p>}
 
             <button
                 onClick={handleAddToWishlist}
