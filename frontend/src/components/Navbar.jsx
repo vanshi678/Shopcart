@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { logoutCustomer } from "../services/api";
 import { useCart } from "../context/CartContext";
@@ -51,6 +50,13 @@ const Navbar = () => {
           className="logout-button"
         >
           Cart ({totalItems})
+        </button>
+
+        <button
+          onClick={() => navigate("/orders")}
+          className="logout-button"
+        >
+          My Orders
         </button>
 
         <button onClick={handleLogout} className="logout-button">
